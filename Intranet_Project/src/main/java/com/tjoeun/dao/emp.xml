@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tjoeun.dao.MyBatisDAO"> <!-- mapper 역할을 하는 인터페이스 -->
+
+	<select id="confirmEmpno" parameterType="int" resultType="int">
+		select count(*) from emp where empno=#{empno}
+	</select>
+	
+	<select id="selectlogin" parameterType="int" resultType="empvo">
+		select * from emp a 
+		    inner join dept b on a.deptno = b.deptno
+		    inner join emp_profile c on a.empno = c.empno
+		where a.empno=#{empno}
+	</select>
+	
+	<select id="countByDept" parameterType="int" resultType="int">
+		select count(*) from emp where deptno = #{deptno} and position != 'waiting'
+	</select>
+
+	<select id="selectByDept" parameterType="hash" resultType="empvo">
+		<![CDATA[
+			select * from (   
+				select rownum rnum, TT.* from (
+					select * from emp where permission != 'waiting' and deptno = #{deptno} order by decode(position,'대표이사','1','본부장','2','팀장','3','차장','4','과장','5','대리','6','사원','7')
+				) TT where rownum <= #{endNo}
+			) where rnum >= #{startNo}
+		]]>
+	</select>
+	
+	<select id="registerCheck" parameterType="String" resultType="empvo">
+		select * from emp where trim(empno) = #{empno}
+	</select>
+	
+	<insert id="register" parameterType="empvo">
+		insert into emp (empno, name, password, pernum, email, gender) values (#{empno}, #{name}, #{password}, #{pernum}, #{email}, #{gender})
+	</insert>
+	
+	<insert id="registerprofile" parameterType="empvo">
+		insert into emp_profile (empno) values (#{empno}) 
+	</insert>
+	
+	<update id="registerUpdate" parameterType="empvo">
+		update emp set password = #{password} where empno = #{empno}
+	</update>
+
+	<!-- ========================================================== Manager ========================================================== -->
+	<select id="countwaiting" resultType="int">
+		select count(*) from emp where permission='waiting'
+	</select>
+	
+	<select id="selectwaiting" parameterType="param" resultType="empvo">
+		select * from emp where permission='waiting'
+	</select>
+	
+	<update id="account_approval" parameterType="empvo">
+		update emp set position=#{position}, deptno=#{deptno}, incnum=#{incnum}, hiredate=#{hiredate}, permission=#{permission} where empno=#{empno}
+	</update>
+	
+	<select id="countemp" resultType="int">
+		select count(*) from emp where permission != 'waiting'
+	</select>
+	
+	<select id="selectemp" parameterType="hash" resultType="empvo">
+		<![CDATA[
+			select * from (   
+				select rownum rnum, TT.* from (
+					select * from emp where permission != 'waiting' order by deptno asc, decode(position,'대표이사','1','본부장','2','팀장','3','차장','4','과장','5','대리','6','사원','7')
+				) TT where rownum <= #{endNo}
+			) where rnum >= #{startNo}
+		]]>
+	</select>
+	
+	<select id="countByName" parameterType="String" resultType="int">
+		select count(*) from emp where (name like '%'||#{searchname}||'%')
+	</select>
+	
+	<select id="selectByName" parameterType="param" resultType="empvo">
+    	<![CDATA[
+			select * from (   
+				select rownum rnum, TT.* from (
+					select * from emp where (name like '%'||#{searchname}||'%')
+				) TT where rownum <= #{endNo}
+			) where rnum >= #{startNo}
+		]]>			
+	</select>
+	
+	<select id="countByMultiEmp" parameterType="param" resultType="int">
+		select count(*) from emp where deptno = #{searchdeptno} and (name like '%'||#{searchname}||'%')
+	</select>
+	
+		<select id="selectByMultiEmp" parameterType="param" resultType="empvo">
+    	<![CDATA[
+			select * from (   
+				select rownum rnum, TT.* from (
+					select * from emp where deptno = #{searchdeptno} and (name like '%'||#{searchname}||'%')
+				) TT where rownum <= #{endNo}
+			) where rnum >= #{startNo}
+		]]>			
+	</select>
+	
+	<update id="updatePMS" parameterType="empvo">
+		update emp set permission = #{permission} where empno = #{empno}
+	</update>
+
+	<!-- Approval -->
+	<select id ="selectMemberAllForApproval" parameterType="int" resultType="empvo">
+		select empno, name, position, a.deptno, deptname from emp a
+        	inner JOIN dept b on a.deptno = b.deptno
+		where empno != #{empno} and permission != 'waiting'
+	</select>
+
+	<select id ="selectMemberByName" parameterType="String" resultType="empvo">
+		select empno, name, position, deptno from emp
+		<where>
+			<if test="value != null and value != ''">
+				name like CONCAT(CONCAT('%',#{value}),'%') and permission != 'waiting' 
+			</if>
+		</where>
+		order by deptno desc, decode(position,'대표이사','1','본부장','2','팀장','3','차장','4','과장','5','대리','6','사원','7')
+	</select>
+	
+	<!-- emp_profile -->
+	<update id="updateProfile" parameterType="empvo">
+		UPDATE emp_profile SET profilename = #{profilename}, realprofile = #{realprofile} where empno = #{empno}
+	</update>
+	
+	<!-- 아이디 찾기 -->
+	<select id="findID" parameterType="empvo" resultType="String">
+		select empno from emp where name=#{name} and pernum = #{pernum}
+	</select>
+	
+	<!-- 비밀번호 찾기 -->
+	<select id="findPW" parameterType="empvo" resultType="String">
+		select password from emp where empno = #{empno} and name=#{name} and pernum = #{pernum}
+	</select>
+	
+	<!-- 쪽지 전송 자동완성 -->
+	<select id="searchemp" parameterType="param" resultType="empvo">
+		select * from emp where (name like '%'||#{searchname}||'%') and empno != #{empno} 
+	</select>
+	
+	<select resultType="String" parameterType="empvo" id="selectApprover">
+		select e.name from emp e where e.empno in (#{firstApprover}, #{interimApprover}, #{finalApprover}) 
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

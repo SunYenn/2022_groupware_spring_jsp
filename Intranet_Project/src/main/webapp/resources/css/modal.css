@@ -1,0 +1,212 @@
+@charset "UTF-8";
+
+/* 공통 */
+.top {
+	height: 50px;
+	border-radius: 10px 10px 0 0;
+	background-color: #D8D2CB;
+	line-height: 50px;
+	display: flex;
+}
+
+.top .top1 {
+	width: 80%;
+	text-align: left;
+	padding-left: 20px;
+	font-size : 20px;
+	font-weight: bold;
+}
+
+.top .top2 {
+	width: 20%;
+	text-align: right;
+	padding-right: 10px;
+	font-size: 50px;
+	line-height: 50px;
+	color: #fff;
+}
+
+.top .top2:hover {
+	cursor: pointer;
+	font-weight: bold;
+}
+
+.middle {
+	padding: 20px 20px 10px 0px;
+}
+
+.middle table{
+	width: 100%;
+
+}
+.middle table tr{
+	height:50px;
+}
+
+.middle table tr th{	
+	width: 30%;
+	text-align: center;
+}
+
+.middle table tr td{
+	width: 70%;
+}
+
+/* 메세지 보내는 Modal */
+.pmback {
+	position: absolute;
+	z-index: 998;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 969px;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: none;
+}
+
+.transpm {
+	background-color: #fff;
+	position: absolute;
+	top: 20%;
+	left: 35%;
+	border: 1px solid #D8D2CB;
+	border-radius: 10px;
+	box-shadow: 2px 0px 5px 0px;
+	padding: 0px;
+	width: 600px;
+	display: none;
+}
+
+/* 비밀번호 변경 Modal */
+.background {
+	position: absolute;
+	z-index: 998;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 969px;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: none;
+}
+
+.pwchange {
+	background-color: #fff;
+	position: absolute;
+	top: 30%;
+	left: 40%;
+	border: 1px solid #D8D2CB;
+	border-radius: 10px;
+	box-shadow: 2px 0px 5px 0px;
+	padding: 0;
+	width: 500px;
+	display: none;
+}
+
+/* TODO 일정 등록 Modal */
+.inserttodoback {
+	position: absolute;
+	z-index: 998;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 969px;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: none;
+}
+
+.inserttodo {
+	background-color: #fff;
+	position: absolute;
+	top: 30%;
+	left: 35%;
+	border: 1px solid #D8D2CB;
+	border-radius: 10px;
+	box-shadow: 2px 0px 5px 0px;
+	padding: 0px;
+	width: 500px;
+	display: none;
+}
+
+/* TODO 일정 수정 Modal */
+.updatetodoback {
+	position: absolute;
+	z-index: 998;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 969px;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: none;
+}
+
+.updatetodo {
+	background-color: #fff;
+	position: absolute;
+	top: 30%;
+	left: 35%;
+	border: 1px solid #D8D2CB;
+	border-radius: 10px;
+	box-shadow: 2px 0px 5px 0px;
+	padding: 0;
+	width: 500px;
+	display: none;
+}
+
+/* 관리자 - 글 카테고리 이동 Modal */
+.moveboardback {
+	position: absolute;
+	z-index: 998;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 969px;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: none;
+}
+
+.moveboarddiv {
+	background-color: #fff;
+	position: absolute;
+	top: 30%;
+	left: 40%;
+	border: 1px solid #D8D2CB;
+	border-radius: 10px;
+	box-shadow: 2px 0px 5px 0px;
+	padding: 0px;
+	width: 400px;
+	display: none;
+}
+
+/* 프로필 이미지 등록 Modal */
+.profileback {
+	position: absolute;
+	z-index: 998;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 969px;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: none;
+}
+
+.profilediv {
+	background-color: #fff;
+	position: absolute;
+	top: 20%;
+	left: 35%;
+	border: 1px solid #D8D2CB;
+	border-radius: 10px;
+	box-shadow: 2px 0px 5px 0px;
+	padding: 0px;
+	width: 600px;
+	display: none;
+}
+
+#proimg {
+	width: 300px;
+	max-height: 450px;
+}
+
+#profilename {
+	margin-left: 70px;
+}

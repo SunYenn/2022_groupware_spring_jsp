@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tjoeun.dao.MyBatisDAO"> <!-- mapper 역할을 하는 인터페이스 -->
+	
+	<!-- 쪽지 전송(저장) -->
+	<insert id="sendmessage" parameterType="meo">
+		insert into message (idx,transeempno,receiveempno,title,content,attachedfile,realfilename) 
+			values (message_idx_seq.nextval,#{transeempno},#{receiveempno},#{title},#{content},#{attachedfile},#{realfilename})
+	</insert>
+	
+	<!-- 안읽은 쪽지 count -->
+	<select id="noreadCount" parameterType="int" resultType="int">
+		select count(*) from message where receiveempno = #{empno} and read = 'NO'
+	</select>
+	
+	<!-- 받은 쪽지 count -->
+	<select id="receiveMessageCount" parameterType="int" resultType="int">
+		select count(*) from message where receiveempno = #{empno} and status = 'NO'
+	</select>
+
+	<!-- 받은 쪽지 list  -->
+	<select id="receiveMessageList" parameterType="param" resultType="meo">
+		<![CDATA[
+			select * from (
+				select rownum rnum, KK.* from( 
+					select a.idx, a.transeempno, b.name as transename, a.receiveempno, c.name as receivename, a.title, a.content, a.writedate, a.attachedfile, a.realfilename, a.status, a.read
+					from message a 
+					    inner join emp b on a.transeempno = b.empno 
+					    inner join emp c on a.receiveempno = c.empno 
+					where receiveempno = #{empno} and status = 'NO'
+					order by idx desc
+				) KK where rownum <= #{endNo}
+			) where rnum >= #{startNo}
+		]]>
+	</select>
+	
+	<!-- 받은 쪽지 검색 count -->
+	<select id="receiveMessageCountMulti" parameterType="param" resultType="int">
+		select count(*) 
+			from message a 
+    			inner join emp b on a.transeempno = b.empno
+			where receiveempno = #{empno} and status = 'NO'
+			<if test='searchcategory =="보낸사람"'>
+				and b.name like '%'||#{searchobj}||'%'
+			</if>
+			<if test='searchcategory =="제목"'>
+				and title like '%'||#{searchobj}||'%'
+			</if>
+	</select>
+	
+	<!-- 받은 쪽지 검색 list -->
+	<select id="receiveMessageListMulti" parameterType="param" resultType="meo">
+		<![CDATA[
+			select * from (
+				select rownum rnum, KK.* from( 
+					select a.idx, a.transeempno, b.name as transename, a.receiveempno, c.name as receivename, a.title, a.content, a.writedate, a.attachedfile, a.realfilename, a.status, a.read
+					from message a 
+					    inner join emp b on a.transeempno = b.empno 
+					    inner join emp c on a.receiveempno = c.empno 
+					where receiveempno = #{empno} and status = 'NO'
+		]]>
+					<if test='searchcategory =="보낸사람"'>
+						and b.name like '%'||#{searchobj}||'%'
+					</if>
+					<if test='searchcategory =="제목"'>
+						and title like '%'||#{searchobj}||'%'
+					</if>
+		
+		<![CDATA[
+					order by idx desc
+				) KK where rownum <= #{endNo}
+			) where rnum >= #{startNo}
+		]]>
+	</select>
+	
+	<!-- 보낸 쪽지 count -->
+	<select id="sendMessageCount" parameterType="int" resultType="int">
+		select count(*) from message where transeempno = #{empno}
+	</select>
+	
+	<!-- 보낸 쪽지 list -->
+	<select id="sendMessageList" parameterType="param" resultType="meo">
+		<![CDATA[
+			select * from (
+				select rownum rnum, KK.* from( 
+					select a.idx, a.transeempno, b.name as transename, a.receiveempno, c.name as receivename, a.title, a.content, a.writedate, a.attachedfile, a.realfilename, a.status, a.read
+					from message a 
+					    inner join emp b on a.transeempno = b.empno 
+					    inner join emp c on a.receiveempno = c.empno 
+					where transeempno = #{empno}
+					order by idx desc
+				) KK where rownum <= #{endNo}
+			) where rnum >= #{startNo}
+		]]>
+	</select>
+	
+	<!-- 보낸 쪽지 검색 count -->
+	<select id="sendMessageCountMulti" parameterType="param" resultType="int">
+		select count(*) 
+			from message a 
+    			inner join emp b on a.receiveempno = b.empno
+			where transeempno = #{empno}
+			<if test='searchcategory =="받는사람"'>
+				and b.name like '%'||#{searchobj}||'%'
+			</if>
+			<if test='searchcategory =="제목"'>
+				and title like '%'||#{searchobj}||'%'
+			</if>
+	</select>
+	
+	<!-- 보낸 쪽지 검색 list -->
+	<select id="sendMessageListMulti" parameterType="param" resultType="meo">
+		<![CDATA[
+			select * from (
+				select rownum rnum, KK.* from( 
+					select a.idx, a.transeempno, b.name as transename, a.receiveempno, c.name as receivename, a.title, a.content, a.writedate, a.attachedfile, a.realfilename, a.status, a.read
+					from message a 
+					    inner join emp b on a.transeempno = b.empno 
+					    inner join emp c on a.receiveempno = c.empno 
+					where transeempno = #{empno}
+		]]>
+					<if test='searchcategory =="받는사람"'>
+						and c.name like '%'||#{searchobj}||'%'
+					</if>
+					<if test='searchcategory =="제목"'>
+						and title like '%'||#{searchobj}||'%'
+					</if>
+		
+		<![CDATA[
+					order by idx desc
+				) KK where rownum <= #{endNo}
+			) where rnum >= #{startNo}
+		]]>
+	</select>
+
+	<!-- 휴지통 쪽지 count -->
+	<select id="trashMessageCount" parameterType="int" resultType="int">
+		select count(*) from message where receiveempno = #{empno} and status = 'remove'
+	</select>
+	
+	<!-- 휴지통 쪽지 list -->
+	<select id="trashMessageList" parameterType="param" resultType="meo">
+		<![CDATA[
+			select * from (
+				select rownum rnum, KK.* from( 
+					select a.idx, a.transeempno, b.name as transename, a.receiveempno, c.name as receivename, a.title, a.content, a.writedate, a.attachedfile, a.realfilename, a.status, a.read
+					from message a 
+					    inner join emp b on a.transeempno = b.empno 
+					    inner join emp c on a.receiveempno = c.empno 
+					where receiveempno = #{empno} and status = 'remove'
+					order by idx desc
+				) KK where rownum <= #{endNo}
+			) where rnum >= #{startNo}
+		]]>
+	</select>
+	
+	<!-- 휴지통 쪽지 검색 count -->
+	<select id="trashMessageCountMulti" parameterType="param" resultType="int">
+		select count(*) 
+			from message a 
+    			inner join emp b on a.transeempno = b.empno
+			where receiveempno = #{empno} and status = 'remove' 
+			<if test='searchcategory =="보낸사람"'>
+				and b.name like '%'||#{searchobj}||'%'
+			</if>
+			<if test='searchcategory =="제목"'>
+				and title like '%'||#{searchobj}||'%'
+			</if>
+	</select>	
+	
+	<!-- 휴지통 쪽지 검색 list -->
+	<select id="trashMessageListMulti" parameterType="param" resultType="meo">
+		<![CDATA[
+			select * from (
+				select rownum rnum, KK.* from( 
+					select a.idx, a.transeempno, b.name as transename, a.receiveempno, c.name as receivename, a.title, a.content, a.writedate, a.attachedfile, a.realfilename, a.status, a.read
+					from message a 
+					    inner join emp b on a.transeempno = b.empno 
+					    inner join emp c on a.receiveempno = c.empno 
+					where receiveempno = #{empno} and status = 'remove'
+		]]>
+					<if test='searchcategory =="보낸사람"'>
+						and b.name like '%'||#{searchobj}||'%'
+					</if>
+					<if test='searchcategory =="제목"'>
+						and title like '%'||#{searchobj}||'%'
+					</if>
+		
+		<![CDATA[
+					order by idx desc
+				) KK where rownum <= #{endNo}
+			) where rnum >= #{startNo}
+		]]>
+	</select>	
+	
+	<!-- 쪽지 읽기 -->
+	<select id="messageSelectByIdx" parameterType="int" resultType="meo">
+		select a.idx, a.transeempno, b.name as transename, a.receiveempno, c.name as receivename, a.title, a.content, a.writedate, a.attachedfile, a.realfilename, a.status, a.read
+	    from message a 
+	        inner join emp b on a.transeempno = b.empno
+	        inner join emp c on a.receiveempno = c.empno 
+    	where idx = #{idx}
+	</select>
+	
+	<!-- 쪽지 읽음 -->
+	<update id="updateMessageStatus" parameterType="meo">
+		update message set read='YES' where idx = #{idx}
+	</update>
+	
+	<!-- 쪽지 받은 쪽지함에서 삭제 -->
+	<update id="messageRemove" parameterType="meo">
+		update message set status='remove' where idx = #{idx}
+	</update>
+
+	<!-- 쪽지 복구 -->
+	<update id="messageRestore" parameterType="meo">
+		update message set status='NO' where idx = #{idx}
+	</update>
+
+	<!-- 쪽지 휴지통에서 삭제 -->
+	<delete id="messageDelete" parameterType="meo">
+		update message set status='DEL' where idx = #{idx}
+	</delete>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

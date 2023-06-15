@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="empvo" class="com.tjoeun.vo.EmpVO"/>
+	<bean id="boardvo" class="com.tjoeun.vo.BoardVO"/>
+	<bean id="meetroomvo" class="com.tjoeun.vo.MeetRoomVO"/>
+	<bean id="attendvo" class="com.tjoeun.vo.AttendVO"/>
+	<bean id="payslipvo" class="com.tjoeun.vo.PaySlipVO"/>
+	<bean id="approvalvo" class="com.tjoeun.vo.ApprovalVO"/>
+	<bean id="todovo" class="com.tjoeun.vo.TodoVO"/>
+	<bean id="msvo" class="com.tjoeun.vo.MessageVO"/>
+	
+	<bean id="datedata" class="com.tjoeun.vo.DateData"/>
+	<bean id="param" class="com.tjoeun.vo.Param"/>
+
+	<bean id="getList" class="com.tjoeun.service.GetList"/>
+
+</beans>

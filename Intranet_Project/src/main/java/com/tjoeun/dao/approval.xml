@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tjoeun.dao.MyBatisDAO"> <!-- mapper 역할을 하는 인터페이스 -->
+
+	<resultMap id="approvalResultMap" type="approvalvo">
+	
+		<id property="appNo" column="APP_SEQ" />
+		
+		<!-- APPROVAL -->
+		<result property="appWriteDate" column="APP_WRITE_SYS" />
+		<result property="appWriteNo" column="APP_WRITE_NO" />
+		<result property="firstApprover" column="FIRST_TIME_APPROVER" />
+		<result property="interimApprover" column="INTERIM_APPROVER" />
+		<result property="finalApprover" column="FINAL_APPROVER" />
+		<result property="appCheckDate" column="APP_CHECK_SYSDATE" />
+		<result property="appCheckProgress" column="APP_CHECK_PROGRESS" />
+		<result property="appKinds" column="APPROVAL_KINDS" />
+		<result property="appPresent" column="APP_PRESENT" />
+		<result property="appReason" column="APP_REASON" />
+
+		<result property="deptName" column="DEPTNO" />
+		<result property="userName" column="NAME" />
+		<result property="position" column="POSITION" />
+		<result property="rowNum" column="ROWNUM" />
+
+		<!-- APP_LOA -->
+		<result property="loaNo" column="LOA_SEQ" />
+		<result property="loaAppNo" column="LOA_APP_SEQ" />
+		<result property="loaTitle" column="LOA_TITLE" />
+		<result property="loaContent" column="LOA_DETAIL" />
+		<result property="loaOriginalFileName" column="LOA_ORIFILENAME" />
+		<result property="loaRealFileName" column="LOA_REFILENAME" />
+
+		<!-- APP_ER -->
+		<result property="erNo" column="ER_SEQ" />
+		<result property="erAppNo" column="ER_APP_SEQ" />
+		<result property="erDeadline" column="ER_DEADLINE" />
+		<result property="erClassify" column="ER_CLASSIFY" />
+		<result property="allAmount" column="ER_ALLAMOUNT" />
+		<result property="erTitle" column="ER_TITLE" />
+		<result property="erDetail" column="ER_DETAIL" />
+		<result property="erAmount" column="ER_AMOUNT" />
+		<result property="erReference" column="ER_REFERENCE" />
+		<result property="moneytaryUnit" column="ER_MONEYTARYUNIT" />
+
+		<!-- APP_LEAVE -->
+		<result property="leaveNo" column="LEAVE_SEQ" />
+		<result property="leaveAppNo" column="LEAVE_APP_SEQ" />
+		<result property="leaveClassify" column="LEAVE_CLASSIFY" />
+		<result property="leaveStart" column="LEAVE_START" />
+		<result property="leaveFinish" column="LEAVE_FINISH" />
+		<result property="leaveDetail" column="LEAVE_DETAIL" />
+		<result property="appEmergncyCall" column="APP_EMERGENCYCALL" />
+		
+		<!-- APP_RECEIVE_REF -->
+		<result property="receiveRefNo" column="RECEIVE_REF_SEQ" />
+		<result property="reRefAppNo" column="RECEIVE_REF_APP_SEQ" />
+		<result property="referList" column="RECEIVE_REF_CC" />
+	</resultMap>
+
+	<select id="approvalCount_YET" parameterType="hash" resultType="_int">
+		SELECT COUNT(*)
+		FROM APPROVAL A
+			JOIN EMP E ON (A.APP_WRITE_NO = E.EMPNO)
+		WHERE
+		    A.APP_CHECK_PROGRESS = '결재대기'
+			AND E.EMPNO = #{empno}
+	</select>
+
+	<select id="approvalCount_UNDER" parameterType="hash"
+		resultType="_int">
+		SELECT COUNT(*)
+		FROM APPROVAL A
+	  		JOIN EMP E ON (A.APP_WRITE_NO = E.EMPNO)
+		WHERE
+			A.APP_CHECK_PROGRESS = '결재중'
+			AND E.EMPNO = #{empno}
+	</select>
+
+	<select id="approvalCount_DONE" parameterType="hash"
+		resultType="_int">
+		SELECT COUNT(*)
+		FROM APPROVAL A
+			JOIN EMP E ON (A.APP_WRITE_NO = E.EMPNO)
+		WHERE
+			A.APP_CHECK_PROGRESS = '결재완료'
+			AND E.EMPNO = #{empno}
+	</select>
+	
+	<select id="approvalCount_CANCEL" parameterType="hash"
+		resultType="_int">
+		SELECT COUNT(*)
+		FROM APPROVAL A
+			JOIN EMP E ON (A.APP_WRITE_NO = E.EMPNO)
+		WHERE
+			A.APP_CHECK_PROGRESS = '결재반려'
+			AND E.EMPNO = #{empno}
+	</select>
+
+	<select id="selectRecentList" parameterType="param"
+		resultMap="approvalResultMap">
+		SELECT ROWNUM, B.* FROM (
+			SELECT 
+				A.*,
+				E.name as userName,
+				E.EMPNO,
+				E.POSITION,
+				E.DEPTNO,
+				L.LOA_TITLE,
+				LEA.LEAVE_CLASSIFY,
+				ER.ER_TITLE
+			FROM APPROVAL A
+				JOIN EMP E ON (A.APP_WRITE_NO = E.EMPNO)
+				LEFT JOIN APP_LOA L ON (A.APP_SEQ = L.LOA_APP_SEQ)
+				LEFT JOIN APP_LEAVE LEA ON (A.APP_SEQ = LEA.LEAVE_APP_SEQ)
+				LEFT JOIN APP_ER ER ON (A.APP_SEQ = ER.ER_APP_SEQ)
+			WHERE (
+				(A.FIRST_TIME_APPROVER = #{userNo}) OR
+				(A.INTERIM_APPROVER = #{userNo}) OR
+				(A.FINAL_APPROVER = #{userNo})
+			)
+			ORDER BY A.APP_SEQ DESC
+		) B WHERE ROWNUM <![CDATA[ < ]]>= 6 ORDER BY ROWNUM
+	</select>
+	
+	<select id="selectRecentList1" parameterType="param"
+		resultMap="approvalResultMap">
+		SELECT ROWNUM, B.* FROM (
+			SELECT 
+				A.*,
+				E.EMPNO,
+				E.POSITION,
+				E.DEPTNO,
+				L.LOA_TITLE,
+				LEA.LEAVE_CLASSIFY,
+				ER.ER_TITLE
+			FROM APPROVAL A
+				JOIN EMP E ON (A.APP_WRITE_NO = E.EMPNO)
+				LEFT JOIN APP_LOA L ON (A.APP_SEQ = L.LOA_APP_SEQ)
+				LEFT JOIN APP_LEAVE LEA ON (A.APP_SEQ = LEA.LEAVE_APP_SEQ)
+				LEFT JOIN APP_ER ER ON (A.APP_SEQ = ER.ER_APP_SEQ)
+			WHERE ROWNUM <![CDATA[ < ]]>= 6 AND (A.APP_WRITE_NO = #{userNo})
+			ORDER BY A.APP_SEQ DESC
+		) B ORDER BY ROWNUM
+	</select>
+
+	<select id="listCount" parameterType="param" resultType="_int">
+		SELECT COUNT(*) FROM APPROVAL A
+			JOIN EMP E ON (A.APP_WRITE_NO = E.EMPNO)
+		<where>
+			<if test="approval_status != null and approval_status != ''">
+				AND APP_CHECK_PROGRESS = #{approval_status}
+			</if>
+			<if test="userNo != null and userNo != ''">
+				AND APP_WRITE_NO = #{userNo}
+			</if>
+		</where>
+	</select>
+
+	<select id="selectApprovalList" parameterType="param" resultMap="approvalResultMap">
+	<![CDATA[
+	SELECT * FROM (
+		select ROWNUM AS RNUM, A.* from (
+			SELECT  
+				A.*,
+				E.NAME,
+				E.POSITION,
+				E.DEPTNO,
+				L.LOA_TITLE,
+				LEA.LEAVE_CLASSIFY,
+				ER.ER_TITLE
+			FROM APPROVAL A 
+				JOIN EMP E ON (A.APP_WRITE_NO = E.EMPNO)
+				LEFT JOIN APP_LOA L ON (A.APP_SEQ = L.LOA_APP_SEQ)
+				LEFT JOIN APP_LEAVE LEA ON (A.APP_SEQ = LEA.LEAVE_APP_SEQ)
+				LEFT JOIN APP_RECEIVE_REF arr ON (A.APP_SEQ = arr.RECEIVE_REF_APP_SEQ)
+				LEFT JOIN APP_ER ER ON (A.APP_SEQ = ER.ER_APP_SEQ)
+	        ]]>
+		<where>
+			<if test="approval_status != null and approval_status != ''">
+				AND APP_CHECK_PROGRESS = #{approval_status}
+			</if>
+			<if test="userNo != null and userNo != ''">
+				AND APP_WRITE_NO = #{userNo}
+			</if>
+		</where>
+		ORDER BY APP_SEQ DESC
+			) A
+		<![CDATA[
+			WHERE ROWNUM <= #{endNo}
+			)
+		WHERE #{startNo} <= RNUM
+		]]>
+
+	</select>
+
+	<select id="selectLeaveListDetail" parameterType="int" resultMap="approvalResultMap">
+		SELECT 
+			A.*,
+			E.NAME,
+			E.POSITION,
+			E.DEPTNO,
+			LEA.*,
+			R.RECEIVE_REF_CC
+		FROM APPROVAL A
+			JOIN EMP E ON (A.APP_WRITE_NO = E.EMPNO)
+			JOIN APP_RECEIVE_REF R ON (A.APP_SEQ = R.RECEIVE_REF_APP_SEQ)
+			JOIN APP_LEAVE LEA ON (A.APP_SEQ = LEA.LEAVE_APP_SEQ)
+		WHERE A.APP_SEQ = #{appNo}
+	</select>
+
+	<select id="selectLOAListDetail" parameterType="param" resultMap="approvalResultMap">
+		SELECT 
+			A.*,
+			E.NAME,
+			E.POSITION,
+			E.DEPTNO,
+			L.*,
+			RECEIVE_REF_CC
+		FROM APPROVAL A
+			JOIN EMP E ON (A.APP_WRITE_NO = E.EMPNO)
+			JOIN APP_LOA L ON (A.APP_SEQ = L.LOA_APP_SEQ)
+			JOIN APP_RECEIVE_REF R ON (A.APP_SEQ = R.RECEIVE_REF_APP_SEQ)
+		WHERE A.APP_SEQ = #{appNo}
+	</select>
+	
+	<select id="selectExpenseReportListDetail" parameterType="_int" resultMap="approvalResultMap">
+		SELECT 
+			A.*,
+			E.NAME,
+			E.POSITION,
+			E.DEPTNO,
+			ER.*,
+			R.RECEIVE_REF_CC
+		FROM APPROVAL A
+			JOIN EMP E ON (A.APP_WRITE_NO = E.EMPNO)
+			JOIN APP_ER ER ON (A.APP_SEQ = ER.ER_APP_SEQ)
+			JOIN APP_RECEIVE_REF R ON (A.APP_SEQ = R.RECEIVE_REF_APP_SEQ)
+		WHERE A.APP_SEQ = #{appNo}
+	</select>
+
+	<!-- insert Approval -->
+	<insert id="insertApproval" parameterType="approvalvo">
+
+		<selectKey keyProperty="appNo" resultType="int" order="BEFORE">
+			select NVL(MAX(app_seq), 0) + 1 from approval
+		</selectKey>
+
+		INSERT INTO APPROVAL VALUES(
+			#{appNo},
+			#{appWriteNo},
+			SYSDATE,
+			#{firstApprover},
+			#{interimApprover},
+			#{finalApprover},
+			#{appCheckDate},
+			DEFAULT,
+			#{appKinds},
+			DEFAULT,
+			DEFAULT
+		)
+	</insert>
+	
+	<!-- insert LOA -->
+	<insert id="insertAppLoa" parameterType="hash"
+		useGeneratedKeys="true" keyProperty="loaAppNo" keyColumn="LOA_APP_SEQ">
+
+		<selectKey keyProperty="loaAppNo" resultType="int" order="BEFORE">
+			select NVL(MAX(app_seq), 0) from approval
+		</selectKey>
+
+		INSERT INTO APP_LOA VALUES(
+			LOA_SEQ_SEQ.NEXTVAL,
+			#{loaAppNo},
+			#{loaTitle},
+			#{loaContent},
+			#{loaOriginalFileName},
+			#{loaRealFileName}
+		)
+	</insert>
+	
+	<!-- insert ER -->
+	<insert id="insertAppER" parameterType="hash"
+		useGeneratedKeys="true" keyProperty="erAppNo" keyColumn="ER_APP_SEQ">
+
+		<selectKey keyProperty="erAppNo" resultType="int" order="BEFORE">
+			select NVL(MAX(app_seq), 0) from approval
+		</selectKey>
+		
+		INSERT INTO APP_ER VALUES(
+			ER_SEQ_SEQ.NEXTVAL,
+			#{erAppNo},
+			#{erDeadline},
+			#{erClassify},
+			#{erTitle},
+			#{erDetail},
+			#{erAmount},
+			#{erReference},
+			#{allAmount},
+			#{moneytaryUnit}
+		)
+		
+	</insert>
+
+	<!-- insert LEAVE -->
+	<insert id="insertAppLeave" parameterType="hash"
+		useGeneratedKeys="true" keyProperty="leaveNo" keyColumn="LEAVE_SEQ">
+
+		<selectKey keyProperty="leaveAppNo" resultType="int" order="BEFORE">
+			select NVL(MAX(app_seq), 0) from approval
+		</selectKey>
+
+		INSERT INTO APP_LEAVE VALUES(
+			LEAVE_SEQ_SEQ.NEXTVAL,
+			#{leaveAppNo},
+			#{leaveClassify},
+			#{leaveStart},
+			#{leaveFinish},
+			#{leaveDetail},
+			#{appEmergncyCall}
+		)
+		
+	</insert>
+
+	<!-- insert Receive_Ref-->
+	<insert id="insertReceiveRef" parameterType="hash">
+ 		INSERT INTO APP_RECEIVE_REF VALUES(
+			RECEIVE_REF_SEQ_SEQ.NEXTVAL,
+			#{appNo},
+			#{referList}
+		)
+	</insert>
+
+	<!-- 결재 승인 -->
+	<update id="approved1" parameterType="_int">
+		UPDATE APPROVAL SET
+		APP_PRESENT='B', APP_CHECK_PROGRESS='결재중', APP_CHECK_SYSDATE=sysdate WHERE APP_SEQ=#{appNo}
+	</update>
+
+	<update id="approved2" parameterType="_int">
+		UPDATE APPROVAL SET
+		APP_PRESENT='C', APP_CHECK_PROGRESS='결재중', APP_CHECK_SYSDATE=sysdate WHERE APP_SEQ=#{appNo}
+	</update>
+
+	<update id="approved3" parameterType="_int">
+		UPDATE APPROVAL SET
+		APP_PRESENT='D', APP_CHECK_PROGRESS='결재완료', APP_CHECK_SYSDATE=sysdate WHERE APP_SEQ=#{appNo}
+	</update>
+
+	<!-- 결재 반려 -->
+	<update id="canceled1" parameterType="approvalvo">
+		UPDATE APPROVAL SET 
+		APP_PRESENT='B', APP_CHECK_PROGRESS='결재반려', APP_CHECK_SYSDATE=sysdate, APP_REASON = #{appReason} WHERE APP_SEQ=#{appNo}
+	</update>
+
+	<update id="canceled2" parameterType="approvalvo">
+		UPDATE APPROVAL SET 
+		APP_PRESENT='C', APP_CHECK_PROGRESS='결재반려', APP_CHECK_SYSDATE=sysdate, APP_REASON = #{appReason} WHERE APP_SEQ=#{appNo}
+	</update>
+
+	<update id="canceled3" parameterType="approvalvo">
+		UPDATE APPROVAL SET 
+		APP_PRESENT='D', APP_CHECK_PROGRESS='결재반려', APP_CHECK_SYSDATE=sysdate, APP_REASON = #{appReason} WHERE APP_SEQ=#{appNo}
+	</update>
+
+	<!-- 검색 -->
+	<select id="AselecCountMulti" parameterType="param" resultType="int">
+		SELECT COUNT(*) FROM approval a
+    		INNER JOIN emp b on a.app_write_no = b.empno
+		<where>
+			<if test="searchobj != null and searchobj != ''">
+				<choose>
+					<when test="searchcategory != null and searchcategory != '' and searchcategory == 'category'">
+						APPROVAL_KINDS = #{searchobj}
+					</when>
+					<when test="searchcategory != null and searchcategory != '' and searchcategory == 'writer'">
+						name like '%'||#{searchobj}||'%'
+					</when>
+					<when test="searchcategory != null and searchcategory != '' and searchcategory == 'status'">
+						APP_CHECK_PROGRESS = #{searchobj}
+					</when>
+				</choose>
+			</if>
+		</where>
+	</select>
+	
+	<select id="AselectListMulti" parameterType="param" resultMap="approvalResultMap">
+			select a.*, b.loa_title, c.leave_classify, d.er_title, e.deptno from (
+				select rownum rnum, TT.* from (
+					select * from approval a
+    					INNER JOIN emp b on a.app_write_no = b.empno
+					<where>
+						<if test="searchobj != null and searchobj != ''">
+							<choose>
+								<when test="searchcategory != null and searchcategory != '' and searchcategory == 'category'">
+									APPROVAL_KINDS = #{searchobj}
+								</when>
+								<when test="searchcategory != null and searchcategory != '' and searchcategory == 'writer'">
+									name like '%'||#{searchobj}||'%'
+								</when>
+								<when test="searchcategory != null and searchcategory != '' and searchcategory == 'status'">
+									APP_CHECK_PROGRESS = #{searchobj}
+								</when>
+							</choose>
+						</if>
+					</where>
+					<![CDATA[
+				) TT where rownum <= #{endNo}
+			) a
+				left outer join APP_LOA b on a.APP_SEQ = b.LOA_APP_SEQ
+				left outer join APP_LEAVE c on a.APP_SEQ = c.LEAVE_APP_SEQ
+				left outer join APP_ER d on a.APP_SEQ = d.ER_APP_SEQ
+				join EMP e on e.EMPNO = a.APP_WRITE_NO
+
+				where a.rnum >= #{startNo}
+				order by APP_SEQ desc
+		]]>
+	</select>
+
+	<update id="updateApprovalFromCancel" parameterType="hash">
+		update approval set APP_REASON = #{reason}
+		where APP_SEQ = #{seq}
+	</update>
+
+</mapper>
+

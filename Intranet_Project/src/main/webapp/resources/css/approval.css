@@ -1,0 +1,293 @@
+@charset "UTF-8";
+
+/* approval main */
+.approval_main_head {
+	display: flex;
+}
+
+.approval_main_head > div{
+	width: 20%;
+	height: 150px;
+	margin: 20px auto;
+}
+
+.approval_main_head > div > div{
+	border: 1px solid #808080;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 15px 0px;
+}
+
+.approval_main_head > div > div:nth-child(1) {
+	border-bottom: none;
+	border-top-left-radius: 10px; 
+	border-top-right-radius: 10px; 
+}
+
+.approval_main_head > div > div:nth-child(2) {
+	border-bottom-left-radius: 10px; 
+	border-bottom-right-radius: 10px; 
+}
+
+.approval_main_head > div:nth-child(1) > div:nth-child(1) {
+	background: #D3DEDC;
+	color: #606060;
+}
+
+.approval_main_head > div:nth-child(2) > div:nth-child(1) {
+	background: #92A9BD;
+	color: #f2f2f2;
+}
+
+.approval_main_head > div:nth-child(3) > div:nth-child(1) {
+	background: #7C99AC;
+	color: #eeeeee;
+}
+
+.approval_main_head > div:nth-child(4) > div:nth-child(1) {
+	background: #476071;
+	color: #eeeeee;
+}
+
+.approval_main_body > tbody > tr:hover {
+	background: #eee;
+}
+
+.approval_main_body > tbody > tr > td {
+	padding: 4px 7px;
+	font-size: 15px;
+}
+
+
+/* 양식 */
+.cash-form-section {
+	padding: 5px;
+}
+
+.cash-disbursement > table {
+	border: 1px solid black;
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.cash-disbursement td {
+	border: 1px solid;
+	text-align: center;
+}
+
+
+.cash-disbursement > table > thead .appformtitle {
+	font-size: 40px;
+	font-weight: 1000;
+}
+
+.cash-disbursement > table > thead > tr > td {
+	padding: 5px;
+}
+
+.cash-disbursement > table > thead > tr:nth-child(1) > td:nth-child(2) {
+	width: 50px;
+	font-size: 25px;
+	font-weight: 500;
+	line-height: 40px;
+}
+
+.nameView {
+	font-size: 15px; 
+	height: 30px !important;
+}
+
+.cash-disbursement .searchMember{
+	font-size: 10px;
+	width: 100px;
+	height: 25px;
+	line-height: 25px;
+	border-radius: 20px;
+}
+
+.cash-disbursement textarea, input {
+	padding: 0px;
+	line-height: 40px;
+	text-align: center;
+	border: none;
+	resize: none;
+}
+
+.cash-disbursement textarea {
+	line-height: normal;
+	text-align: left;
+}
+
+#proposerText, #proposerText:disabled {
+	text-align: center;
+	background: none;
+}
+
+.cash-disbursement .formrefer > td {
+	padding: 0px 5px;
+}
+
+.cash-disbursement .formrefer > td > div {
+	min-height: 40px;
+	max-height: 70px;
+	overflow-y: auto; 
+	display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cash-disbursement .writeinfo > td > div {
+	display: flex;
+	width: 100%;
+	height: 35px
+}
+
+.cash-disbursement .writeinfo > td > div > p {
+	width: 18%;
+	padding: 0px;
+	line-height: 35px; 
+}
+
+.cash-disbursement .writeinfo > td > div > p:nth-child(2n - 1) {
+	border-right: 1px solid;
+	border-left: 1px solid;
+}
+
+.cash-disbursement .writeinfo > td > div > p:nth-child(1) {
+	border-left: none;
+}
+
+.cash-disbursement .writeinfo input {
+	border: none;
+	height: 35px;
+}
+
+.cash-disbursement .fileattach > td {
+	padding: 5px;
+	text-align: left;
+}
+
+.cash-disbursement .fileattach  > td > input {
+	line-height: normal;
+}
+
+.cash-disbursement .writeamount  > td > input {
+	width: 300px;
+}
+
+.cash-disbursement .writeamount  > td > select {
+	width: 150px;
+}
+
+.cash-disbursement .contentarea > td {
+	padding: 5px 10px;
+}
+
+.cash-disbursement .contentarea > td > div {
+	height: 170px;
+	text-align: left;
+	overflow-y:auto;
+}
+
+.cash-disbursement .bisang > td {
+	height: 60px;
+	font-size: 15px;
+}
+
+.cash-disbursement .gigan > td {
+	height: 60px;
+	font-size: 15px;
+}
+
+.cash-disbursement .gigan > td > input {
+	width: 200px;
+}
+
+.cash-disbursement .leaveClassify > td > div {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.cash-disbursement .leaveClassify > td > div > span {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-right: 20px;
+}
+
+.cash-disbursement .signup > td{
+	height: 40px; 
+	padding: 10px 40px;
+	text-align: right; 
+}
+
+.cash-disbursement .signup > td > div{
+	display: flex;
+	text-align: right; 
+	justify-content: flex-end;
+	vertical-align: middle;
+}
+
+.cash-disbursement .signup > td > div > span {
+	line-height: 40px;	
+}
+
+.cash-disbursement .signup > td > div > input {
+	font-size:15px; 
+	width:70px; 
+	height:30px; 
+	line-height: 30px; 
+	border-radius:20px; 
+	margin: 5px 10px
+}
+
+.cash-disbursement .signup > td > div > textarea {
+	width:100px; 
+	font-size:24px; 
+	height: 40px;
+}
+
+.cash-form-section #button {
+	margin-top: 10px;
+	text-align: right;
+}
+
+/* 수신 결재서 */
+#checkIfApproved {
+	position: absolute;
+	width: 120px; 
+	height: 120px; 
+	margin-left: -80px; 
+	margin-top: -50px;
+	z-index: 2;
+}
+
+.signImg > td > img {
+	position: absolute;
+	width: 120px; 
+	height: 120px; 
+	margin-left: -80px; 
+	margin-top: -50px;
+}
+
+.singBtn > td > input {
+	height: 25px;
+	border-radius: 20px;
+	line-height: 25px;
+}
+
+.signName > td {
+	text-align: right; 
+	height: 50px; 
+	padding-right: 40px
+}
+
+.swal2-confirm {
+	line-height: normal !important;
+}
+
+
+
+
